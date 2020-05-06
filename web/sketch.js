@@ -1,7 +1,7 @@
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
-var h = 400;
-var w = 400;
+var h = c.height;
+var w = c.width;
 var board = [[' ', ' ', ' '],
              [' ', ' ', ' '],
              [' ', ' ', ' ']];
@@ -79,6 +79,7 @@ function Check_Winner(x = 0)
 function print()
 {
     ctx.clearRect(0, 0, w, h);
+    ctx.beginPath();
     ctx.moveTo(w/3, 0);
     ctx.lineTo(w/3, h);
     ctx.moveTo(2*w/3, 0);
@@ -88,8 +89,12 @@ function print()
     ctx.moveTo(0, 2*h/3);
     ctx.lineTo(w, 2*h/3);
     console.log([x1, y1, x2, y2]);
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    if (x1 != 0)
+    {
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+    }
+    ctx.closePath();
     ctx.stroke();
     ctx.font = "70px Comic Sans MS";
     ctx.textAllign = "center";
@@ -211,7 +216,7 @@ function turn()
         winner = Check_Winner(1);
         if (winner != 'T')
         {
-            print();
+            // print();
             //We have a winner
             console.log("We have a Winner");
             document.getElementById("out").innerHTML = "WE HAVE A WINNER!!";
@@ -219,6 +224,29 @@ function turn()
         currplayer = (currplayer+1)%2;
     }
 }
+
+let canvasElem = document.querySelector("canvas");
+canvasElem.addEventListener("mousedown", function(e)
+{
+    if (available_cnt && currplayer != computer && winner == 'T')
+    {
+        getMousePosition(canvasElem, e);
+        turn(currplayer);
+        // currplayer = (currplayer+1)%2;
+        print();
+    }
+    if (available_cnt && currplayer == computer && winner == 'T')
+    {
+        turn(currplayer);
+        // currplayer = (currplayer+1)%2;
+        print();
+    }
+    if (available_cnt == 0 && winner == 'T')
+    {
+        console.log("MATCH TIED!!");
+        document.getElementById("out").innerHTML = "MATCH TIED!!";
+    }
+});
 
 function replay()
 {
@@ -233,28 +261,4 @@ function replay()
     document.getElementById("block").innerHTML = " ";
     print();
 }
-
-let canvasElem = document.querySelector("canvas");
-    canvasElem.addEventListener("mousedown", function(e)
-    {
-        if (available_cnt && currplayer != computer && winner == 'T')
-        {
-            getMousePosition(canvasElem, e);
-            turn(currplayer);
-            // currplayer = (currplayer+1)%2;
-            print();
-        }
-        if (available_cnt && currplayer == computer && winner == 'T')
-        {
-            turn(currplayer);
-            // currplayer = (currplayer+1)%2;
-            print();
-        }
-        if (available_cnt == 0 && winner == 'T')
-        {
-            console.log("MATCH TIED!!");
-            document.getElementById("out").innerHTML = "MATCH TIED!!";
-        }
-    });
-
 print();
